@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+﻿import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -23,13 +23,14 @@ def get_fitted_models(X_train, y_train):
         "Naive Bayes": GaussianNB(),
         "SVM (RBF)": SVC(
             kernel="rbf",
-            C=1.0,
+            C=10.0,
             gamma="scale",
             probability=True,
             random_state=RANDOM_STATE,
         ),
         "MLP": MLPClassifier(
             hidden_layer_sizes=(64, 32),
+            activation="relu",
             alpha=1e-4,
             early_stopping=True,
             max_iter=500,
@@ -46,7 +47,6 @@ def main() -> None:
     X_train, _, X_test, y_train, _, y_test = load_splits()
     models = get_fitted_models(X_train, y_train)
 
-    # 1. Curva ROC y Curva Precisión-Recall
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     for name, clf in models.items():
@@ -83,7 +83,6 @@ def main() -> None:
     plt.savefig(RESULTS_FIGURES_DIR / "roc_pr_curves.png", dpi=300)
     plt.close()
 
-    # 2. Matrices de confusión
     fig, axes = plt.subplots(2, 2, figsize=(10, 8))
     for ax, (name, clf) in zip(axes.ravel(), models.items()):
         y_pred = clf.predict(X_test)
